@@ -63,12 +63,34 @@ router.post('/:id/status', async (req, res) => {
     // Apply state changes only after validation
     task.status = newStatus;
     task.customData = customData;
-    task.assignedUserId = assignedUserId;
-
+    
     // Persist updated task
     await taskRepository.save(task);
 
     res.json(task);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+/**
+ * Get all tasks assigned to a specific user
+ */
+router.get('/user/:userId', async (req, res) => {
+  try {
+
+   
+    const userId = Number(req.params.userId);
+
+    const allTasks = await taskRepository.find();
+console.log('ALL TASKS:', allTasks);
+
+    const tasks = await taskRepository.findBy({
+      assignedUserId: userId,
+    });
+
+
+    res.json(tasks);
   } catch (err: any) {
     res.status(400).json({ error: err.message });
   }
