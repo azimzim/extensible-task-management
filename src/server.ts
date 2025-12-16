@@ -1,8 +1,10 @@
-import 'reflect-metadata';
+import { AppDataSource } from './infra/db';
 import app from './app';
 
 const PORT = 3000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+AppDataSource.initialize().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
 });
