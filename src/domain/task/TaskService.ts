@@ -12,6 +12,10 @@ export class TaskService {
       throw new Error("Task is closed");
     }
 
+    if (!assignedUserId) {
+      throw new Error("Next assigned user is required");
+    }
+
     const taskType = getTaskType(task.type);
 
     if (!taskType.isValidStatus(newStatus)) {

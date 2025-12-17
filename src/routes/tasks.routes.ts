@@ -2,6 +2,7 @@ import { Router } from "express";
 import { AppDataSource } from "../infra/db";
 import { Task } from "../domain/task/Task.entity";
 import { TaskService } from "../domain/task/TaskService";
+import { getTaskType } from "..";
 
 const router = Router();
 
@@ -58,11 +59,13 @@ router.post("/:id/change-status", async (req, res) => {
 
     const { newStatus, customData, assignedUserId } = req.body;
 
-    if (!assignedUserId) {
-      throw new Error("Next assigned user is required");
+    // ---- Basic route-level validation ----
+    if (
+      typeof customData !== "object" || customData === null ||    Array.isArray(customData)  ) {
+      return res.status(400).json({ error: "customData must be a valid object" });
     }
 
-    // Domain validation (business rules)
+    // ---- Domain validation (business rules) ----
     taskService.validateStatusChange(
       task,
       newStatus,
@@ -70,15 +73,27 @@ router.post("/:id/change-status", async (req, res) => {
       assignedUserId
     );
 
-    // Apply state changes only after validation
+    // ---- Build customData according to target status ----
+    const requiredFields = getTaskType(task.type).getRequiredFieldsForStatus( newStatus );
+   
+    // Only keep required fields in customData (others are discarded)
+    const nextCustomData: Record<string, any> = {};
+    for (const field of requiredFields) {
+      if (customData && field in customData) {
+        nextCustomData[field] = customData[field];
+      }
+    }
+
+    // ---- Apply state ----
     task.status = newStatus;
-    task.customData = customData;
+    task.customData = nextCustomData;
     task.assignedUserId = assignedUserId;
 
     // Persist updated task
     await taskRepository.save(task);
-
-    res.json(task);
+    // Always return DB state (source of truth)
+    const updatedTask = await taskRepository.findOneBy({ id: task.id });
+    return res.json(updatedTask);
   } catch (err: any) {
     res.status(400).json({ error: err.message });
   }
