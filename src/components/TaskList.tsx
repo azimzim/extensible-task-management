@@ -21,7 +21,7 @@ export default function TasksList({ tasks, onUpdate }: Props) {
       }}
     >
       {tasks.map((task) => (
-        <TaskCard key={task.id} task={task} onUpdate={() => {}} />
+        <TaskCard key={task.id} task={task} onUpdate={onUpdate} />
       ))}
     </Box>
   );

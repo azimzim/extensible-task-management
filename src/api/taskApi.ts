@@ -26,7 +26,7 @@ export async function changeStatus(
   payload: {
     newStatus: number;
     assignedUserId: number;
-    customData: Record<string, any>;
+    customData: Record<string, any> | string;
   }
 ): Promise<Task> {
   const res = await fetch(`${BASE}/${taskId}/change-status`, {
@@ -34,12 +34,38 @@ export async function changeStatus(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-  if (!res.ok) throw new Error("change failed");
-  return res.json();
+  // Parse response body
+  const data: any = await res.json();
+
+  // Log server response
+  console.log("change-status response:", {
+    status: res.status,
+    ok: res.ok,
+    data,
+  });
+
+  if (!res.ok) {
+    throw new Error(data?.error || "change failed");
+  }
+
+  return data;
 }
 
 export async function closeTask(taskId: number): Promise<Task> {
   const res = await fetch(`${BASE}/${taskId}/close`, { method: "POST" });
-  if (!res.ok) throw new Error("close failed");
-  return res.json();
+  // Parse response body
+  const data: any = await res.json();
+
+  // Log server response
+  console.log("change-status response:", {
+    status: res.status,
+    ok: res.ok,
+    data,
+  });
+
+  if (!res.ok) {
+    throw new Error(data?.error || "change failed");
+  }
+
+  return data;
 }

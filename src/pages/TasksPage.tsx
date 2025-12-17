@@ -5,9 +5,18 @@ import TasksList from "../components/TaskList";
 import CreateTaskForm from "../components/CreateTaskFrom";
 import type { Task } from "../types.ts/task";
 import { useState } from "react";
+import UserTasksFilter from "../components/UserTasksFilter";
+import { getTasksByUser } from "../api/taskApi";
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [selectedUserId, setSelectedUserId] = useState<number | "">("");
+
+  const fetchUserTasks = async () => {
+    if (!selectedUserId) return;
+    const data = await getTasksByUser(selectedUserId);
+    setTasks(data);
+  };
 
   return (
     <Box
@@ -18,39 +27,38 @@ export default function TasksPage() {
         flexDirection: "column",
       }}
     >
-      {/* Header – יכול להיות ממורכז */}
+      {/* Header */}
       <Box sx={{ py: 2, textAlign: "center" }}>
         <Header />
       </Box>
 
-      {/* Body – תמיד על כל המסך */}
+      {/* Body */}
       <Box
         sx={{
-          flex: 1,
+          flex: 1, // take remaining height
           display: "flex",
-          width: "100%",
+          minHeight: 0, // IMPORTANT: allow children to scroll
         }}
       >
-      
+        {/* Left column */}
         <Box
           sx={{
             width: "33.333%",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            borderRight: "1px solid #eee", // רק לבדיקה
           }}
         >
-          <CreateTaskForm
-            onCreated={(t) => setTasks((prev) => [t, ...prev])}
-          />
+        
+          <CreateTaskForm onCreated={(t) => setTasks((prev) => [t, ...prev])} />
         </Box>
 
-        
+        {/* Right column – SCROLL HERE */}
         <Box
           sx={{
-            width: "80%",
-            overflowY: "auto",
+            width: "66.666%",
+            overflowY: "auto", // enable vertical scroll
+            minHeight: 0, // REQUIRED for flex children
             px: 3,
           }}
         >

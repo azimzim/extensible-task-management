@@ -1,15 +1,31 @@
-// statusRequirements.ts
+// config/statusRequirements.ts
+
+export type StatusRequirement = {
+  key: string;   // sent to backend
+  label: string; // shown in UI
+};
+
 export const STATUS_REQUIREMENTS: Record<
   string,
-  Record<number, { label: string }>
+  Record<number, StatusRequirement[]>
 > = {
-  Development: {
-    2: { label: "Specification text" },
-    3: { label: "Branch name" },
-    4: { label: "Version number" },
+  development: {
+    2: [
+      { key: "specification", label: "Specification Text" },
+    ],
+    3: [
+      { key: "branchName", label: "Branch name" },
+    ],
+    4: [
+      { key: "version", label: "Version number" },
+    ],
   },
-  Procurement: {
-    2: { label: "Price quotes (comma separated)" },
-    3: { label: "Receipt reference" },
+  procurement: {
+    2: [
+      { key: "priceQuotes", label: "Price quotes (comma separated)" },
+    ],
+    3: [
+      { key: "receipt", label: "Receipt reference" },
+    ],
   },
 };
