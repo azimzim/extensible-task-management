@@ -1,19 +1,28 @@
-import type { Task } from "../types.ts/task";
+// components/TasksList.tsx
+import { Box } from "@mui/material";
 import TaskCard from "./TaskCard";
+import type { Task } from "../types.ts/task";
 
 
-export default function TaskList({
-  tasks,
-  onUpdate,
-}: {
+type Props = {
   tasks: Task[];
-  onUpdate: (updater: (prev: Task[]) => Task[]) => void;
-}) {
+  onUpdate: React.Dispatch<React.SetStateAction<Task[]>>;
+};
+
+export default function TasksList({ tasks, onUpdate }: Props) {
+ 
+
   return (
-    <>
-      {tasks.map((t) => (
-        <TaskCard key={t.id} task={t} onUpdate={onUpdate} />
+    <Box
+      sx={{
+        height: "100%",
+        overflowY: "auto",
+        pr: 1,
+      }}
+    >
+      {tasks.map((task) => (
+        <TaskCard key={task.id} task={task} onUpdate={() => {}} />
       ))}
-    </>
+    </Box>
   );
 }

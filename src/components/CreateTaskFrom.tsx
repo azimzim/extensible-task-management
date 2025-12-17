@@ -1,6 +1,16 @@
 import { useState } from "react";
 import { createTask } from "../api/taskApi";
 import type { Task } from "../types.ts/task";
+import {
+  Card,
+  CardContent,
+  TextField,
+  Button,
+  MenuItem,
+  Stack,
+  Typography,
+} from "@mui/material";
+import UserSelect from "./UserSelect";
 
 export default function CreateTaskForm({
   onCreated,
@@ -8,11 +18,15 @@ export default function CreateTaskForm({
   onCreated: (task: Task) => void;
 }) {
   const [type, setType] = useState("development");
-  const [assignedUserId, setAssignedUserId] = useState(1);
+  const [assignedUserId, setAssignedUserId] = useState<number | "">("");
   const [error, setError] = useState<string | null>(null);
 
   const submit = async () => {
     try {
+      if (!assignedUserId) {
+        alert("Please select assigned user");
+        return;
+      }
       const task = await createTask({
         type,
         assignedUserId,
@@ -25,29 +39,32 @@ export default function CreateTaskForm({
   };
 
   return (
-    <div style={{ border: "1px solid #aaa", padding: 8, marginBottom: 16 }}>
-      <h4>Create Task</h4>
+    <Card sx={{ width:420, maxWidth:"90%" }}>
+      <CardContent>
+        <Typography variant="h6" mb={2}>
+          Create Task
+        </Typography>
 
-      <div>
-        <label>Type: </label>
-        <select value={type} onChange={(e) => setType(e.target.value)}>
-          <option value="development">Development</option>
-          <option value="procurement">Procurement</option>
-        </select>
-      </div>
+        <Stack spacing={2}>
+          <TextField
+            select
+            label="Task Type"
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+          >
+            <MenuItem value="development">Development</MenuItem>
+            <MenuItem value="procurement">Procurement</MenuItem>
+          </TextField>
 
-      <div>
-        <label>User ID: </label>
-        <input
-          type="number"
-          value={assignedUserId}
-          onChange={(e) => setAssignedUserId(Number(e.target.value))}
-        />
-      </div>
+          <UserSelect value={assignedUserId} onChange={setAssignedUserId} />
 
-      <button onClick={submit}>Create</button>
+          <Button variant="contained" onClick={submit}>
+            Create
+          </Button>
 
-      {error && <div style={{ color: "red" }}>{error}</div>}
-    </div>
+          {error && <Typography color="error">{error}</Typography>}
+        </Stack>
+      </CardContent>
+    </Card>
   );
 }
