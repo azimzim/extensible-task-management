@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Button, Divider } from "@mui/material";
 import Header from "../components/Header";
 
 import TasksList from "../components/TaskList";
@@ -41,16 +41,78 @@ export default function TasksPage() {
         }}
       >
         {/* Left column */}
+        {/* Left column */}
         <Box
           sx={{
             width: "33.333%",
             display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+            flexDirection: "column",
+            borderRight: "1px solid #e0e0e0",
           }}
         >
-        
-          <CreateTaskForm onCreated={(t) => setTasks((prev) => [t, ...prev])} />
+          {/* Top half – CREATE NEW TASK */}
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              px: 2,
+            }}
+          >
+            <Box
+              sx={{
+                fontWeight: 600,
+                mb: 2,
+                letterSpacing: "0.5px",
+              }}
+            >
+              CREATE NEW TASK
+            </Box>
+
+            <CreateTaskForm
+              onCreated={(t) => setTasks((prev) => [t, ...prev])}
+            />
+          </Box>
+
+          <Divider />
+
+          {/* Bottom half – GET USER DETAILS */}
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              px: 2,
+            }}
+          >
+            <Box
+              sx={{
+                fontWeight: 600,
+                mb: 2,
+                letterSpacing: "0.5px",
+              }}
+            >
+              USER TASKS
+            </Box>
+
+            <UserTasksFilter
+              selectedUserId={selectedUserId}
+              setSelectedUserId={setSelectedUserId}
+              fetchUserTasks={fetchUserTasks}
+            />
+            <Button
+              variant="outlined"
+              color="secondary"
+              sx={{ mt: 2 }}
+              onClick={() => setTasks([])}
+            >
+              CLEAR
+            </Button>
+          </Box>
         </Box>
 
         {/* Right column – SCROLL HERE */}

@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import type { Task } from "../types.ts/task";
 import { changeStatus, closeTask } from "../api/taskApi";
-import { USERS } from "../config/users";
+import UserSelect from "./UserSelect";
 import {
   STATUS_REQUIREMENTS,
   type StatusRequirement,
@@ -35,7 +35,7 @@ export default function TaskCard({ task, onUpdate }: Props) {
 
   const [customKey, setCustomKey] = useState("");
   const [customValue, setCustomValue] = useState("");
-  
+
   const [error, setError] = useState<string | null>(null);
   const nextStatus = task.status + 1;
   const allRequirements: StatusRequirement[] = Object.values(
@@ -93,7 +93,7 @@ export default function TaskCard({ task, onUpdate }: Props) {
       const updated = await changeStatus(task.id, {
         newStatus: reverseStatus,
         assignedUserId: task.assignedUserId,
-        customData
+        customData,
       });
 
       onUpdate((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
@@ -121,13 +121,13 @@ export default function TaskCard({ task, onUpdate }: Props) {
         <Typography variant="subtitle1" fontWeight="bold">
           Task #{task.id} ({task.type})
         </Typography>
-      
+
         <Stack direction="row" spacing={1} alignItems="center">
           <Typography>Status: {task.status}</Typography>
-          
+
           <Chip
             label={task.isClosed ? "Closed" : "Open"}
-            color={task.isClosed ?  "default" : "success"}
+            color={task.isClosed ? "default" : "success"}
             size="small"
           />
         </Stack>
@@ -141,23 +141,13 @@ export default function TaskCard({ task, onUpdate }: Props) {
 
             <Stack spacing={2} mt={2}>
               {/* Next user */}
-              <TextField
-                select
-                label="Next Assigned User"
-                value={nextUserId}
-                onChange={(e) => setNextUserId(Number(e.target.value))}
-                sx={{
-                  "& .MuiInputBase-root": {
-                    width: 200,
-                  },
-                }}
-              >
-                {USERS.map((u) => (
-                  <MenuItem key={u.id} value={u.id}>
-                    {u.name}
-                  </MenuItem>
-                ))}
-              </TextField>
+              <Box sx={{ maxWidth: 220 }}>
+                <UserSelect
+                  label="Next Assigned User"
+                  value={nextUserId}
+                  onChange={setNextUserId}
+                />
+              </Box>
 
               {/* Custom data */}
               {allRequirements && (
