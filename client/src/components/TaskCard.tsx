@@ -121,6 +121,23 @@ export default function TaskCard({ task, onUpdate }: Props) {
         <Typography variant="subtitle1" fontWeight="bold">
           Task #{task.id} ({task.type})
         </Typography>
+        <Typography variant="body2">
+          <Typography component="span" fontWeight="bold">
+            Custom Data:
+          </Typography>{" "}
+          [
+          {Object.entries(task.customData).length === 0
+            ? "—"
+            : Object.entries(task.customData).map(
+                ([key, value], index, arr) => (
+                  <span key={key}>
+                    <strong>{key}</strong>: {String(value)}
+                    {index < arr.length - 1 && ", "}
+                  </span>
+                )
+              )}
+          ]
+        </Typography>
 
         <Stack direction="row" spacing={1} alignItems="center">
           <Typography>Status: {task.status}</Typography>
